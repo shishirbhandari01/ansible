@@ -1,0 +1,5 @@
+---
+- hosts: database 
+  tasks: 
+  - name: get server's hostname
+    command: hostname

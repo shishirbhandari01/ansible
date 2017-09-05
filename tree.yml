@@ -1,0 +1,7 @@
+---
+  - hosts: loadbalancer
+    tasks: 
+      - name: install tree for easy directory access
+        yum:
+          name: tree
+          state: present 
