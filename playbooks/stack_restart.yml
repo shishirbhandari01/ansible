@@ -1,0 +1,26 @@
+---
+
+- hosts: loadbalancer
+  tasks:
+    - name: taking down loadbalancing service 
+      service: name=nginx state=stopped 
+
+- hosts: webserver 
+  tasks: 
+    - name: taking down http service 
+      service: name=httpd state=stopped 
+
+- hosts: database
+  tasks: 
+    - name: Restarting down database service 
+      service: name=mysql state=restarted 
+
+- hosts: webserver
+  tasks: 
+    - name: Bringing up httpd service 
+      service: name=httpd state=started 
+
+- hosts: loadbalancer
+  tasks: 
+    - name: Bringing up nginx service 
+      service: name=nginx state=started    

@@ -1,0 +1,15 @@
+---
+- hosts: webserver 
+  tasks:
+    - name: install http and other web components  
+      yum: 
+        name={{item}} state=latest
+      with_items: 
+        - epel-release
+        - httpd
+        - mod_wsgi 
+        - python-pip
+        - python-virtualenv
+    
+    - name: making sure service httpd is up and running 
+      service: name=httpd state=started enabled=yes 

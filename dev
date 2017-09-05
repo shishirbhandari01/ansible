@@ -6,7 +6,7 @@ app01	ansible_user=root
 app02	ansible_user=root
 
 [database]
-db01  	ansible_user=root 
+db01  	 
 
 
 [control]
