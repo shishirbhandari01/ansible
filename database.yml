@@ -1,0 +1,14 @@
+---
+  - hosts: database 
+    tasks: 
+      - name: Installs EPEL release 
+        yum:
+          name: epel-release 
+          state: latest 
+      - name: installing mysql repo 
+        yum:
+          name=http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm state=present  
+      - name: Install my-sql server 
+        yum: 
+          name=mysql-server state=present update_cache=yes
+
