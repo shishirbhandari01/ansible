@@ -1,6 +1,13 @@
 ---
 - hosts: database 
   tasks: 
+    - name: install require packages for db server 
+      yum: name={{item}} state=present update_cache=yes 
+      with_items: 
+          - MySQL-python
+          - tree 
+          - fish
+          
     - name: Installs EPEL release 
       yum: name=epel-release state=latest 
 
@@ -12,3 +19,10 @@
    
     - name: making sure mysql is running 
       service: name=mysql state=started enabled=yes
+
+    - name: create demo database 
+      mysql_db: name=demo state=present 
+
+    - name: create mysql user 
+      mysql_user: name=demo password=demo priv=demo.*:ALL host='%' state=present 
+

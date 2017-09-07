@@ -1,0 +1,6 @@
+---
+- hosts: all 
+  tasks: 
+    - name: configure all hosts with hostname 
+      lineinfile: dest=/etc/hosts line="{{ hostvars[item].ansible_ipv4_address }} {{hostvars[item].ansible_hostname}}" state=present 
+      with_items: "{{groups.all}}"

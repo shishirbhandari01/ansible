@@ -1,0 +1,9 @@
+---
+- hosts: all 
+  tasks: 
+    - name: copying the motd config 
+      template: src=templates/motd.j2 dest=/tmp/ mode=0755
+
+    - name: running the script
+      script: /tmp/motd.j2
+   

@@ -1,0 +1,64 @@
+---
+- hosts: loadbalancer 
+  tasks: 
+    - name: verify nginx service 
+      command: service nginx status # we are using command module because service module does not support status
+    - name: verify nginx is listening on port 80 
+      wait_for: port=80 timeout=1 
+
+- hosts: webserver 
+  tasks: 
+    - name: verify httpd service
+      command: service httpd status
+    - name: verify httpd is listening on port 80 
+      wait_for: port=80 timeout=1 
+
+- hosts: database
+  tasks: 
+    - name: verify mysql service
+      command: service mysql status
+    - name: verify mysql is listening on port 3306
+      wait_for: port=3306 timeout=1 
+
+
+- hosts: control # we are checking if our app really returns good from control host 
+  tasks: 
+    - name: verify end-to-end response 
+      uri: url=http://{{item}} return_content=yes # return content is gonna show actual content instead of just success or failure code  
+      with_items: groups.loadbalancer 
+      register: lb_index # register module creates a new variable, here it creates var lb_index 
+    
+    - fail: msg="index failed to return content" 
+      when: "'Hello, from sunny' not in item.content"
+      with_items: "{{lb_index.results}}"
+
+    - name: verify end-to-end db response
+      uri: url=http://{{item}}/db return_content=yes # return content is gonna show actual content instead of just success or failure code
+      with_items: groups.loadbalancer
+      register: lb_db # register module creates a new variable, here it creates var lb_index
+
+    - fail: msg="index failed to return content"
+      when: "'Database Connected from' not in item.content"
+      with_items: "{{lb_db.results}}"
+
+
+
+- hosts: loadbalancer # we are checking backend web server
+  tasks:
+    - name: verify backend response
+      uri: url=http://{{item}} return_content=yes # return content is gonna show actual content instead of just success or failure code 
+      with_items: groups.webserver
+      register: app_index # register module creates a new variable, here it creates var app_index 
+    
+    - fail: msg="index failed to return content" 
+      when: "'Hello, from sunny {{item.item}}!' not in item.content"
+      with_items: "{{app_index.results}}"
+   
+    - name: verify backend db response
+      uri: url=http://{{item}}/db return_content=yes # return content is gonna show actual content instead of just success or failure code
+      with_items: groups.webserver
+      register: lb_wb # register module creates a new variable, here it creates var lb_index
+
+    - fail: msg="index failed to return content"
+      when: "'Database Connected from {{item.item}}!' not in item.content"
+      with_items: "{{lb_wb.results}}"

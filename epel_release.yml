@@ -1,7 +1,8 @@
 ---
-  - hosts: all 
-    tasks: 
-      - name: Installing or updating Extra Packages for Enterprise Linux 7 - x86_64 repository (epel-release repo) 
-        yum: 
-          name=epel-release state=latest 
+- hosts: all 
+  tasks: 
+    - name: Installing or updating Extra Packages for Enterprise Linux 7 - x86_64 repository (epel-release repo) 
+      yum: name={{item}} state=latest update_cache=yes 
+      with_items: 
+        - python-httplib2 
 
