@@ -1,0 +1,26 @@
+---
+# tasks file for mysql
+- name: install require packages for db server
+  yum: name={{item}} state=present update_cache=yes
+  with_items:
+    - MySQL-python
+    - tree
+    - fish
+
+- name: Installs EPEL release
+  yum: name=epel-release state=latest
+
+- name: installing mysql repo
+  yum: name=http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm state=present
+
+- name: Install my-sql server
+  yum: name=mysql-server state=latest update_cache=yes
+
+- name: making sure mysql is running
+  service: name=mysql state=started enabled=yes
+
+- name: create demo database
+  mysql_db: name=demo state=present
+
+- name: create mysql user
+  mysql_user: name=demo password=demo priv=demo.*:ALL host='%' state=present

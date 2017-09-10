@@ -1,0 +1,13 @@
+---
+# tasks file for control
+- name: Install Packages Required for Control Server 
+  yum: name={{item}} state=present update_cache=yes 
+  with_items: 
+    - epel-release 
+    - ansible
+    - python-httplib2
+    - tree 
+    - curl 
+    - fish 
+    - git 
+
