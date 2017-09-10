@@ -1,2 +1,37 @@
 ---
 # tasks file for httpd
+- name: install http and other web components
+  yum: name={{item}} state=latest update_cache=yes
+  with_items:
+    - epel-release
+    - httpd
+    - mod_wsgi
+    - python-pip
+    - python-virtualenv
+    - MySQL-python
+
+- name: inserting block on configuration file 
+  blockinfile: 
+    path: /etc/httpd/conf/httpd.conf 
+    block: |
+      IncludeOptional conf.d/*.conf
+  notify: httpd restart 
+
+- name: making sure service httpd is up and running
+  service: name=httpd state=started enabled=yes
+
+- name: ensure mod_wsgi is enabled
+  apache2_module: state=present name=wsgi
+  notify: httpd restart
+
+- name: copy demo app to the destination web servers
+  copy: src=app/ dest=/var/www/demo mode=0755
+  notify: httpd restart
+
+- name: copy demo.conf on destination web servers
+  copy: src=templates/demo.conf dest=/etc/httpd/conf.d/ mode=0755
+  notify: httpd restart
+
+- name: setup python virtual environment
+  pip: requirements=/var/www/demo/requirements.txt virtualenv=/var/www/demo/.venv
+  notify: httpd restart
