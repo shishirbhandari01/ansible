@@ -1,0 +1,18 @@
+---
+# tasks file for CIserver
+- name: install EPEL release repo 
+  yum: name=epel-release state=latest
+
+- name: import 
+  shell: rpm --import http://pkg.jenkins-ci.org/redhat-stable/jenkins-ci.org.key
+
+- name: install packages required for CI/CD server 
+  yum: name={{item}} state=present update_cache=yes 
+  with_items: 
+    - java-1.8.0-openjdk.x86_64 
+    - jenkins 
+
+- name: make sure jenkins is up 
+  service: name=jenkins state=started 
+
+

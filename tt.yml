@@ -1,0 +1,6 @@
+---
+- hosts: db01
+  tasks: 
+    - name: demo use of fact variable 
+      shell: 
+        echo "{{ansible_hostname}}" >> /tmp/shishir 

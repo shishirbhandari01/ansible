@@ -6,9 +6,6 @@
     - epel-release
     - httpd
     - mod_wsgi
-    - python-pip
-    - python-virtualenv
-    - MySQL-python
 
 - name: inserting block on configuration file 
   blockinfile: 
@@ -24,14 +21,3 @@
   apache2_module: state=present name=wsgi
   notify: httpd restart
 
-- name: copy demo app to the destination web servers
-  copy: src=app/ dest=/var/www/demo mode=0755
-  notify: httpd restart
-
-- name: copy demo.conf on destination web servers
-  copy: src=templates/demo.conf dest=/etc/httpd/conf.d/ mode=0755
-  notify: httpd restart
-
-- name: setup python virtual environment
-  pip: requirements=/var/www/demo/requirements.txt virtualenv=/var/www/demo/.venv
-  notify: httpd restart

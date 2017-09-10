@@ -1,0 +1,5 @@
+---
+#this playbook is for jenkins server
+- hosts: jenkins 
+  roles:
+    - CIserver 
