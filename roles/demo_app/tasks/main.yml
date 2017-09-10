@@ -1,2 +1,24 @@
 ---
 # tasks file for demo_app
+- name: install packages required for demo app 
+  yum: name={{item}} state=latest update_cache=yes
+  with_items:
+    - epel-release 
+    - python-pip
+    - python-virtualenv
+    - MySQL-python
+
+- name: copy demo app to the destination web servers
+  copy: src=/home/vagrant/learningAnsible/app dest=/var/www/demo mode=0755
+  notify: httpd restart
+
+- name: copy demo.conf on destination web servers
+  copy: src=templates/demo.conf dest=/etc/httpd/conf.d/ mode=0755
+  notify: httpd restart
+
+- name: setup python virtual environment
+  pip: requirements=/var/www/demo/requirements.txt virtualenv=/var/www/demo/.venv
+  notify: httpd restart
+
+
+
